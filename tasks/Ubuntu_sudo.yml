@@ -1,0 +1,26 @@
+---
+# Update APT configuration
+- name: add universe repository
+  sudo: yes
+  apt_repository: >
+    repo="deb http://archive.ubuntu.com/ubuntu {{ansible_lsb.codename|lower}} universe"
+    state=present
+  when: should_run
+  register: universe_result
+  until: universe_result|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
+
+# Download keys and package lists
+- name: apt-get update
+  apt: update_cache=yes cache_valid_time=0
+  sudo: yes
+  when: universe_result.changed
+  register: result_aptget_update
+  until: result_aptget_update|success
+  # Workaround https://github.com/ansible/ansible/issues/16868 and
+  # increase default retry count
+  retries: 20
+  delay: 10
