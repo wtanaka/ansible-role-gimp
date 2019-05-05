@@ -1,0 +1,5 @@
+---
+- include: compat_sudo.yml
+- include: install_package_names_sudo.yml
+- include: Ubuntu_sudo.yml
+  when: ansible_distribution == 'Ubuntu'
